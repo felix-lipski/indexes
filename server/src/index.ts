@@ -1,9 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { getTickersHandler } from "./tickers";
-import { getCandlesHandler } from "./candles";
-import { initDB } from "./db";
+import { getTickersHandler } from "./assets/tickers";
+import { initDB } from "./alerts/db";
+import { setupCheckAlerts } from "./alerts/job";
+import { setupAlertsCrud } from "./alerts/crud";
+import { getCandlesHandler } from "./assets/candles";
 
 dotenv.config();
 const app = express();
@@ -20,37 +22,10 @@ app.get("/assets", getTickersHandler);
 
 app.get("/assets/:ticker", getCandlesHandler);
 
-const injectDB = async () => {
-  const db = await initDB();
-
-  app.post("/alerts", async (req, res) => {
-    const { userEmail, ticker, triggerPrice, triggerState } = req.body;
-    console.log({ ticker });
-
-    const dbRes = await db.run(
-      `
-      INSERT INTO alerts (userEmail, ticker, triggerPrice, triggerState, isActive)
-      VALUES (?, ?, ?, ?, ?)`,
-      [userEmail, ticker, triggerPrice, triggerState, true]
-    );
-
-    res.status(201).send("Alert created");
-  });
-
-  app.get("/alerts", async (req, res) => {
-    const alerts = await db.all("SELECT * FROM alerts");
-    res.json(alerts);
-  });
-
-  app.delete("/alerts/:id", async (req, res) => {
-    const { id } = req.params;
-
-    await db.run("DELETE FROM alerts WHERE id = ?", [id]);
-    res.send("Alert deleted");
-  });
-};
-
-injectDB();
+initDB().then((db) => {
+  setupAlertsCrud(db, app);
+  setupCheckAlerts(db);
+});
 
 app.listen(port, () => {
   console.log(`Server is up at http://localhost:${port}`);

@@ -2,6 +2,8 @@
 import useSWR from "swr";
 import { backendUrl } from "../lib/backend";
 import Navbar from "../Navbar";
+import { LoadingPage } from "../LoadingPage";
+import { notFound } from "next/navigation";
 
 type AlertsResult = {
   id: number;
@@ -27,8 +29,8 @@ export default function Page() {
     fetch(url).then((r) => r.json())
   );
 
-  if (error) return <div>failed to load</div>;
-  if (isLoading || !alerts) return <div>loading...</div>;
+  if (error) return notFound();
+  if (isLoading || !alerts) return <LoadingPage />;
 
   return (
     <>

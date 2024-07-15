@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from "express";
-import { candleMockCountback40, etfXNYSTickersMock } from "./mocks";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -40,8 +39,8 @@ export const getCandlesHandler = async (
   const today = new Date();
 
   try {
-    // const candles = await getCandles(ticker, today);
-    const candles = candleMockCountback40 as MarketDataCandlesResponse;
+    const candles = await getCandles(ticker, today);
+    // const candles = candleMockCountback40 as MarketDataCandlesResponse;
 
     if (candles.s === "error") {
       console.error(`Error fetching candles for ${ticker}: ${candles.errmsg}`);
@@ -78,8 +77,6 @@ export const getCandlesHandler = async (
         date.getDate() === mostRecentDate.getDate()
       );
     });
-
-    console.log(latestMarketOpeningDateIndex);
 
     const sanitized = transposed.slice(latestMarketOpeningDateIndex);
 

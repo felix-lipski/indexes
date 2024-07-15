@@ -1,7 +1,9 @@
 "use client";
 import { backendUrl } from "@/app/lib/backend";
+import { LoadingPage } from "@/app/LoadingPage";
 import Navbar from "@/app/Navbar";
 import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
 import useSWR from "swr";
 
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -14,8 +16,8 @@ export default function Page({ params }: { params: { ticker: string } }) {
     (url: string) => fetch(url).then((r) => r.json())
   );
 
-  if (error) return <div>failed to load</div>;
-  if (isLoading) return <div>loading...</div>;
+  if (error) return notFound();
+  if (isLoading) return <LoadingPage />;
 
   const option = {
     chart: {
@@ -48,8 +50,6 @@ export default function Page({ params }: { params: { ticker: string } }) {
       }),
     },
   ];
-
-  console.log(series[0].data);
 
   return (
     <>
