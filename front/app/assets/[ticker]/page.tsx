@@ -1,5 +1,6 @@
 "use client";
 import { backendUrl } from "@/app/lib/backend";
+import Navbar from "@/app/Navbar";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
 
@@ -51,26 +52,29 @@ export default function Page({ params }: { params: { ticker: string } }) {
   console.log(series[0].data);
 
   return (
-    <div className="min-h-full flex flex-1 flex-row justify-center">
-      <div className="max-w-full rounded shadow-lg flex flex-col gap-4 p-10 m-10 bg-slate-100">
-        <h1>{params.ticker}</h1>
-        <ApexChart
-          type="candlestick"
-          options={option}
-          series={series}
-          height={200}
-          width={500}
-        />
+    <>
+      <Navbar />
+      <div className="min-h-full flex flex-1 flex-row justify-center">
+        <div className="max-w-full rounded shadow-lg flex flex-col gap-4 p-10 m-10 bg-slate-100">
+          <h1>{params.ticker}</h1>
+          <ApexChart
+            type="candlestick"
+            options={option}
+            series={series}
+            height={200}
+            width={500}
+          />
 
-        <a
-          href={`/alerts/add?ticker=${ticker}&defaultPrice=${
-            data.data[data.data.length - 1].y[0]
-          }`}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
-        >
-          Add alert
-        </a>
+          <a
+            href={`/alerts/add?ticker=${ticker}&defaultPrice=${
+              data.data[data.data.length - 1].y[0]
+            }`}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Add alert
+          </a>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

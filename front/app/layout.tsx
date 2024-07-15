@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Stock Indexes Browser",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -17,9 +17,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="min-h-full bg-blue-950 flex flex-1 flex-col justify-center"
+      className="min-h-full bg-blue-950 flex flex-col justify-between"
     >
-      <body className={inter.className}>{children}</body>
+      <body
+        className={
+          inter.className +
+          " min-h-full flex flex-col justify-between align-middle"
+        }
+      >
+        {children}
+      </body>
     </html>
   );
 }
