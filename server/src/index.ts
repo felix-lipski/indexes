@@ -1,7 +1,9 @@
-import express, { Express, Request, Response, Application } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { router } from "./routes";
+import { getTickersHandler } from "./tickers";
+import { getCandlesHandler } from "./candles";
+import { initDB } from "./db";
 
 dotenv.config();
 const app = express();
@@ -11,14 +13,40 @@ const corsOptions = {
   origin: "http://localhost:3000",
 };
 
+app.use(express.json());
 app.use(cors(corsOptions));
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to Express & TypeScript Server");
-});
+app.get("/assets", getTickersHandler);
+
+app.get("/assets/:ticker", getCandlesHandler);
+
+const injectDB = async () => {
+  const db = await initDB();
+
+  app.post("/alerts", async (req, res) => {
+    const { userEmail, ticker, triggerPrice, triggerState } = req.body;
+
+    const dbRes = await db.run(
+      `
+      INSERT INTO alerts (userEmail, ticker, triggerPrice, triggerState, isActive)
+      VALUES (?, ?, ?, ?, ?)`,
+      [userEmail, ticker, triggerPrice, triggerState, true]
+    );
+
+    console.log(dbRes);
+
+    res.status(201).send("Alert created");
+  });
+
+  app.get("/alerts", async (req, res) => {
+    const alerts = await db.all("SELECT * FROM alerts");
+    console.log({ alerts });
+    res.json(alerts);
+  });
+};
+
+injectDB();
 
 app.listen(port, () => {
-  console.log(`Server is Firee at http://localhost:${port}`);
+  console.log(`Server is up at http://localhost:${port}`);
 });
-
-app.use("/api", router);

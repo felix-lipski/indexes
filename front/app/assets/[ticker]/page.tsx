@@ -1,4 +1,5 @@
 "use client";
+import { backendUrl } from "@/app/lib/backend";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
 
@@ -8,7 +9,7 @@ export default function Page({ params }: { params: { ticker: string } }) {
   const ticker = params.ticker;
 
   const { data, error, isLoading } = useSWR(
-    `http://localhost:3001/api/indices/${ticker}`,
+    `${backendUrl}/assets/${ticker}`,
     (url: string) => fetch(url).then((r) => r.json())
   );
 
@@ -60,6 +61,15 @@ export default function Page({ params }: { params: { ticker: string } }) {
           height={200}
           width={500}
         />
+
+        <a
+          href={`/assets/${ticker}/add-alert?defaultPrice=${
+            data.data[data.data.length - 1].y[0]
+          }`}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
+        >
+          Add alert
+        </a>
       </div>
     </div>
   );

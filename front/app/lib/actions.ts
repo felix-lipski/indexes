@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { cookies } from "next/headers";
+import { backendUrl } from "./backend";
 
 export async function authenticate(
   _state: any,
@@ -50,4 +51,23 @@ export async function authenticate(
     }
     throw error;
   }
+}
+
+export async function addAlert(formData: FormData) {
+  console.log(formData.get("ticker"));
+  const res = await fetch(`${backendUrl}/alerts`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userEmail: "a@b.c",
+      ticker: "ABC",
+      triggerPrice: 100,
+      triggerState: "above",
+    }),
+  });
+  const x = await res.text();
+  console.log(x);
 }
