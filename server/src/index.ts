@@ -25,6 +25,7 @@ const injectDB = async () => {
 
   app.post("/alerts", async (req, res) => {
     const { userEmail, ticker, triggerPrice, triggerState } = req.body;
+    console.log({ ticker });
 
     const dbRes = await db.run(
       `

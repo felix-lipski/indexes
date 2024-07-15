@@ -66,11 +66,11 @@ export const getCandlesHandler = async (
     // Sanitize the data to include only the candles from one day.
     // This way we avoid having large gaps in the graph.
 
-    const mostRecentDate = new Date();
+    const mostRecentDate = new Date(0);
     mostRecentDate.setUTCSeconds(Math.max.apply(null, candles.t));
 
     const latestMarketOpeningDateIndex = transposed.findIndex(({ x }) => {
-      const date = new Date();
+      const date = new Date(0);
       date.setUTCSeconds(x);
       return (
         date.getFullYear() === mostRecentDate.getFullYear() &&
@@ -78,6 +78,8 @@ export const getCandlesHandler = async (
         date.getDate() === mostRecentDate.getDate()
       );
     });
+
+    console.log(latestMarketOpeningDateIndex);
 
     const sanitized = transposed.slice(latestMarketOpeningDateIndex);
 

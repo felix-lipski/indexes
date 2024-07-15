@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { backendUrl } from "./backend";
 import { getTokens } from "next-firebase-auth-edge";
 import { clientConfig, serverConfig } from "@/config";
+import { redirect } from "next/navigation";
 
 export async function addAlert(formData: FormData) {
   const tokens = await getTokens(cookies(), {
@@ -12,10 +13,10 @@ export async function addAlert(formData: FormData) {
     serviceAccount: serverConfig.serviceAccount,
   });
 
-  // TODO handle no email
+  // TODO: handle no email
   const email = tokens?.decodedToken.email;
 
-  const res = await fetch(`${backendUrl}/alerts`, {
+  await fetch(`${backendUrl}/alerts`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -28,6 +29,6 @@ export async function addAlert(formData: FormData) {
       triggerState: formData.get("triggerState"),
     }),
   });
-  const x = await res.text();
-  console.log(x);
+
+  redirect("/alerts");
 }

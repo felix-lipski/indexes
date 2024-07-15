@@ -20,13 +20,8 @@ export default function Page() {
             <input
               type="text"
               name="ticker"
-              className={
-                !!ticker
-                  ? "bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed"
-                  : "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               defaultValue={ticker || ""}
-              disabled={!!ticker}
             />
             <label htmlFor="triggerState" className="block text-sm font-medium">
               Trigger state:
