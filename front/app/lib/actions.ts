@@ -54,20 +54,26 @@ export async function authenticate(
 }
 
 export async function addAlert(formData: FormData) {
-  console.log(formData.get("ticker"));
-  const res = await fetch(`${backendUrl}/alerts`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userEmail: "a@b.c",
-      ticker: "ABC",
-      triggerPrice: 100,
-      triggerState: "above",
-    }),
-  });
-  const x = await res.text();
-  console.log(x);
+  // console.log(
+  //   formData.get("ticker"),
+  //   formData.get("triggerPrice"),
+  //   formData.get("triggerState"),
+  // );
+  console.log(auth.currentUser);
+
+  // const res = await fetch(`${backendUrl}/alerts`, {
+  //   method: "POST",
+  //   headers: {
+  //     Accept: "application/json",
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     userEmail: "a@b.c",
+  //     ticker: formData.get("ticker"),
+  //     triggerPrice: formData.get("triggerPrice"),
+  //     triggerState: formData.get("triggerState"),
+  //   }),
+  // });
+  // const x = await res.text();
+  // console.log(x);
 }

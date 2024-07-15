@@ -33,15 +33,19 @@ const injectDB = async () => {
       [userEmail, ticker, triggerPrice, triggerState, true]
     );
 
-    console.log(dbRes);
-
     res.status(201).send("Alert created");
   });
 
   app.get("/alerts", async (req, res) => {
     const alerts = await db.all("SELECT * FROM alerts");
-    console.log({ alerts });
     res.json(alerts);
+  });
+
+  app.delete("/alerts/:id", async (req, res) => {
+    const { id } = req.params;
+
+    await db.run("DELETE FROM alerts WHERE id = ?", [id]);
+    res.send("Alert deleted");
   });
 };
 

@@ -3,8 +3,9 @@
 import { addAlert } from "@/app/lib/actions";
 import { useSearchParams } from "next/navigation";
 
-export default function Page({ params }: { params: { ticker: string } }) {
+export default function Page() {
   const searchParams = useSearchParams();
+  const ticker = searchParams.get("ticker");
 
   return (
     <div className="min-h-full flex flex-1 flex-row justify-center">
@@ -15,22 +16,24 @@ export default function Page({ params }: { params: { ticker: string } }) {
           </label>
           <input
             type="text"
-            id="ticker"
-            aria-label="disabled input"
-            className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed"
-            value={params.ticker}
-            disabled
+            name="ticker"
+            className={
+              !!ticker
+                ? "bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed"
+                : "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            }
+            defaultValue={ticker || ""}
+            disabled={!!ticker}
           />
           <label htmlFor="triggerState" className="block text-sm font-medium">
             Trigger state:
           </label>
           <select
-            id="triggerState"
+            name="triggerState"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            defaultValue={"below"}
           >
-            <option selected value="above">
-              Above price
-            </option>
+            <option value="above">Above price</option>
             <option value="below">Below price</option>
           </select>
           <label htmlFor="triggerPrice" className="block text-sm font-medium">
@@ -38,7 +41,7 @@ export default function Page({ params }: { params: { ticker: string } }) {
           </label>
           <input
             type="number"
-            id="triggerPrice"
+            name="triggerPrice"
             aria-describedby="helper-text-explanation"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             defaultValue={searchParams.get("defaultPrice") || 0}
