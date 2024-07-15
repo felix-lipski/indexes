@@ -37,19 +37,25 @@ export const setupCheckAlerts = (db: Database) => {
       const res = await getQuote(alert.ticker);
       if (res.s === "ok") {
         const latestPrice = res.last[0];
-        const { triggerPrice, triggerState } = alert;
+        const { triggerPrice, triggerState, id, isActive } = alert;
 
-        if (triggerState === "above" && latestPrice > triggerPrice) {
-          console.log(
-            `Alert! ${alert.userEmail}, ${alert.ticker} has surpasssed ${latestPrice}$`
-          );
-          // EMAIL API CALL GOES HERE
-        }
-        if (triggerState === "below" && latestPrice < triggerPrice) {
-          console.log(
-            `Alert! ${alert.userEmail}, ${alert.ticker} has fallen below ${latestPrice}$`
-          );
-          // EMAIL API CALL GOES HERE
+        const above = triggerState === "above" && latestPrice > triggerPrice;
+        const below = triggerState === "below" && latestPrice < triggerPrice;
+
+        if (isActive && (above || below)) {
+          db.run("UPDATE alerts SET isActive = ? WHERE id = ?", [false, id]);
+
+          if (above) {
+            console.log(
+              `Alert! ${alert.userEmail}, ${alert.ticker} has surpasssed ${latestPrice}$`
+            );
+            // EMAIL API CALL GOES HERE
+          } else if (below) {
+            console.log(
+              `Alert! ${alert.userEmail}, ${alert.ticker} has fallen below ${latestPrice}$`
+            );
+            // EMAIL API CALL GOES HERE
+          }
         }
       }
     }

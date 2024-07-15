@@ -20,6 +20,14 @@ export const setupAlertsCrud = (db: Database, app: Express) => {
     res.json(alerts);
   });
 
+  app.put("/alerts/:id", async (req, res) => {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    await db.run("UPDATE alerts SET isActive = ? WHERE id = ?", [isActive, id]);
+    res.send("Alert updated");
+  });
+
   app.delete("/alerts/:id", async (req, res) => {
     const { id } = req.params;
 

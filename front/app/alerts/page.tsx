@@ -5,18 +5,32 @@ import Navbar from "../Navbar";
 import { LoadingPage } from "../LoadingPage";
 import { notFound } from "next/navigation";
 
-type AlertsResult = {
+type Alert = {
   id: number;
   userEmail: string;
   ticker: string;
   triggerPrice: number;
   triggerState: "above" | "below";
   isActive: boolean;
-}[];
+};
+
+type AlertsResult = Alert[];
 
 async function deleteAlert(id: number) {
   const res = await fetch(`${backendUrl}/alerts/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error(`Failed to delete alert ${id}`);
+}
+
+async function setAlertActivation(id: number, isActive: boolean) {
+  const res = await fetch(`${backendUrl}/alerts/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ isActive }),
+  });
+
+  if (!res.ok) throw new Error(`Failed to update alert ${id}`);
 }
 
 export default function Page() {
@@ -28,6 +42,11 @@ export default function Page() {
   } = useSWR<AlertsResult>(`${backendUrl}/alerts`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
+  const handleToggleActivation = (alert: Alert) => async () => {
+    const isActive = alert.isActive;
+    await setAlertActivation(alert.id, !isActive);
+    mutate((d) => d?.map((a) => ({ ...a, isActive: !isActive })));
+  };
 
   if (error) return notFound();
   if (isLoading || !alerts) return <LoadingPage />;
@@ -51,6 +70,23 @@ export default function Page() {
                     <p className="text-sm text-gray-500 truncate">
                       {alert.triggerPrice}$
                     </p>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    {alert.isActive ? (
+                      <button
+                        onClick={handleToggleActivation(alert)}
+                        className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded"
+                      >
+                        Active
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleToggleActivation(alert)}
+                        className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded"
+                      >
+                        Deactivated
+                      </button>
+                    )}
                   </div>
                   <div className="flex-shrink-0">
                     <button
