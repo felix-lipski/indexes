@@ -1,5 +1,6 @@
 "use client";
 import { backendUrl } from "@/app/lib/backend";
+import { useAuthorizedFetcher } from "@/app/lib/useAuthorizedFetcher";
 import { LoadingPage } from "@/app/LoadingPage";
 import Navbar from "@/app/Navbar";
 import dynamic from "next/dynamic";
@@ -11,13 +12,15 @@ const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 export default function Page({ params }: { params: { ticker: string } }) {
   const ticker = params.ticker;
 
+  const { fetcher, token } = useAuthorizedFetcher();
+
   const { data, error, isLoading } = useSWR(
-    `${backendUrl}/assets/${ticker}`,
-    (url: string) => fetch(url).then((r) => r.json())
+    token ? `${backendUrl}/assets/${ticker}` : null,
+    fetcher
   );
 
   if (error) return notFound();
-  if (isLoading) return <LoadingPage />;
+  if (isLoading || !token) return <LoadingPage />;
 
   const option = {
     chart: {

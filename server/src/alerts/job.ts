@@ -24,7 +24,7 @@ const getQuote = async (ticker: string): Promise<MarketDataQuoteResponse> => {
   return res.json();
 };
 
-export const setupCheckAlerts = (db: Database) => {
+export const setupCheckAlertsJob = (db: Database) => {
   const checkAlerts = async () => {
     console.info(new Date(), "Running checkAlerts job!");
 
@@ -65,9 +65,3 @@ export const setupCheckAlerts = (db: Database) => {
 
   checkAlerts();
 };
-
-// // Schedule job to run every minute
-// cron.schedule("* * * * *", checkAlerts);
-
-// // Run immediately on startup
-// checkAlerts();

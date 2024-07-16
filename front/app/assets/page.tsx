@@ -1,5 +1,6 @@
 import { backendUrl } from "../lib/backend";
 import Navbar from "../Navbar";
+import { getServerAuthToken } from "../lib/getAuthToken";
 
 type AssetsResult = {
   results: { ticker: string; name: string }[];
@@ -8,7 +9,13 @@ type AssetsResult = {
 };
 
 async function getAssets(): Promise<AssetsResult> {
-  const res = await fetch(`${backendUrl}/assets`);
+  const token = await getServerAuthToken();
+
+  const res = await fetch(`${backendUrl}/assets`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!res.ok) throw new Error("Failed to fetch assets");
   return res.json();
 }

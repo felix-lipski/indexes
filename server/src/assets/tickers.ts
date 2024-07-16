@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from "express";
-import { etfXNYSTickersMock } from "./mocks";
 import dotenv from "dotenv";
 import { ITickers, restClient } from "@polygon.io/client-js";
 
@@ -14,12 +13,11 @@ const tickersCache: { saved: ITickers | null } = { saved: null };
 const getTickers = () => polygonClient.reference.tickers({ type: "ETF" });
 
 export const getTickersHandler = async (
-  req: Request,
+  _: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    // const tickers = etfXNYSTickersMock;
     const tickers = tickersCache.saved || (await getTickers());
 
     if (tickers.status !== "OK") {

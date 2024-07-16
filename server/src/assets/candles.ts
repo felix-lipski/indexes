@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -40,7 +40,6 @@ export const getCandlesHandler = async (
 
   try {
     const candles = await getCandles(ticker, today);
-    // const candles = candleMockCountback40 as MarketDataCandlesResponse;
 
     if (candles.s === "error") {
       console.error(`Error fetching candles for ${ticker}: ${candles.errmsg}`);

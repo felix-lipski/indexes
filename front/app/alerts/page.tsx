@@ -4,6 +4,7 @@ import { backendUrl } from "../lib/backend";
 import Navbar from "../Navbar";
 import { LoadingPage } from "../LoadingPage";
 import { notFound } from "next/navigation";
+import { useAuthorizedFetcher } from "../lib/useAuthorizedFetcher";
 
 type Alert = {
   id: number;
@@ -16,16 +17,24 @@ type Alert = {
 
 type AlertsResult = Alert[];
 
-async function deleteAlert(id: number) {
-  const res = await fetch(`${backendUrl}/alerts/${id}`, { method: "DELETE" });
+async function deleteAlert(id: number, Authorization: string) {
+  const res = await fetch(`${backendUrl}/alerts/${id}`, {
+    method: "DELETE",
+    headers: { Authorization },
+  });
   if (!res.ok) throw new Error(`Failed to delete alert ${id}`);
 }
 
-async function setAlertActivation(id: number, isActive: boolean) {
+async function setAlertActivation(
+  id: number,
+  isActive: boolean,
+  Authorization: string
+) {
   const res = await fetch(`${backendUrl}/alerts/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      Authorization,
     },
     body: JSON.stringify({ isActive }),
   });
@@ -33,23 +42,23 @@ async function setAlertActivation(id: number, isActive: boolean) {
   if (!res.ok) throw new Error(`Failed to update alert ${id}`);
 }
 
-export default function Page() {
+export default function Page(x: any) {
+  const { fetcher, token, Authorization } = useAuthorizedFetcher();
   const {
     data: alerts,
     error,
     isLoading,
     mutate,
-  } = useSWR<AlertsResult>(`${backendUrl}/alerts`, (url: string) =>
-    fetch(url).then((r) => r.json())
-  );
+  } = useSWR<AlertsResult>(token ? `${backendUrl}/alerts` : null, fetcher);
+
   const handleToggleActivation = (alert: Alert) => async () => {
     const isActive = alert.isActive;
-    await setAlertActivation(alert.id, !isActive);
+    await setAlertActivation(alert.id, !isActive, Authorization);
     mutate((d) => d?.map((a) => ({ ...a, isActive: !isActive })));
   };
 
   if (error) return notFound();
-  if (isLoading || !alerts) return <LoadingPage />;
+  if (isLoading || !alerts || !token) return <LoadingPage />;
 
   return (
     <>
@@ -92,7 +101,7 @@ export default function Page() {
                     <button
                       type="button"
                       onClick={async () => {
-                        await deleteAlert(alert.id);
+                        await deleteAlert(alert.id, Authorization);
                         mutate((d) => d?.filter((a) => a.id !== alert.id));
                       }}
                       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
