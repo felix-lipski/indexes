@@ -20,6 +20,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to use the application.
 
+## Screenshots
+
+![Login](screenshots/login.png)
+![Dashboard](screenshots/dashboard.png)
+![Candle Graph](screenshots/graph.png)
+![Add Alert](screenshots/add_alert.png)
+![List Alerts](screenshots/alerts_list.png)
+
 ## Notes
 
 Most of the stock data APIs provide functionality related specifically to Indexes. In the end I have not used any of those since:
