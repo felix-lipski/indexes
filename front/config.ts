@@ -1,3 +1,12 @@
+// Format private key
+const privateKeyRaw = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+const startIndex = privateKeyRaw?.search("-----BEGIN PRIVATE KEY-----");
+const endString = "-----END PRIVATE KEY-----";
+const endIndex = privateKeyRaw?.search(endString);
+const privateKey = privateKeyRaw
+  ?.slice(startIndex, endIndex! + endString.length)
+  .replace(/\\n/g, "\n");
+
 export const serverConfig = {
   cookieName: process.env.AUTH_COOKIE_NAME!,
   cookieSignatureKeys: [
@@ -14,7 +23,7 @@ export const serverConfig = {
   serviceAccount: {
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
     clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL!,
-    privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n")!,
+    privateKey,
   },
 };
 
